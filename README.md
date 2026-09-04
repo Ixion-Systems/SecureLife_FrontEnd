@@ -8,12 +8,12 @@
   </p>
 
   <p align="center">
-    <a href="#-inicio-rápido">Inicio Rápido</a> •
-    <a href="#-arquitectura-feature-based">Arquitectura</a> •
-    <a href="#-módulo-cotizador-automotor">Cotizador</a> •
+    <a href="#inicio-rápido">Inicio Rápido</a> •
+    <a href="#arquitectura-feature-based">Arquitectura</a> •
+    <a href="#características-principales">Características</a> •
     <a href="./DESIGN.md">Design System (DESIGN.md)</a> •
-    <a href="#-scripts-disponibles">Comandos</a> •
-    <a href="#-licencia">Licencia</a>
+    <a href="#scripts-disponibles">Comandos</a> •
+    <a href="#licencia">Licencia</a>
   </p>
 
   <p align="center">
@@ -29,7 +29,7 @@
 
 ---
 
-## 📋 Resumen del Proyecto
+## Resumen del Proyecto
 
 **SecureLife Frontend** es la aplicación web pública y portal de usuarios de SecureLife. Combina una interfaz cinemática y fluida con validación estricta de formularios y conexión directa con el motor actuarial de backend para generar cotizaciones de seguros en segundos, sin intermediarios ni papeleo burocrático.
 
@@ -38,22 +38,22 @@
 
 ---
 
-## ✨ Características Principales
+## Características Principales
 
-* 🚗 **Cotizador Automotor en Tiempo Real:** Asistente paso a paso (Wizard) de 4 etapas que calcula primas mensuales oficiales llamando al backend REST `POST /api/v1/cotizaciones/auto`.
-* 🇦🇷 **Catálogo Oficial de Autos de Argentina:** Base de datos interactiva con más de 20 marcas oficiales (Toyota, Volkswagen, Fiat, Ford, Chevrolet, Renault, etc.) y filtrado dependiente de modelos oficiales (Cronos, Hilux, 208, Amarok, Cruze).
-* 🌊 **Marco Líquido Dinámico (Navbar Liquid Frame):** Barra de navegación flotante con indicador elástico continuo que rastrea la sección activa (`#hero`, `#servicios`, `#sobre-nosotros`, `#cotizador`) sin reinicios abruptos.
-* 🎬 **Experiencia Visual Cinemática:** Fondo animado con ondas sinusoidales (`WaveCanvas`), constelaciones geométricas (`GeometryCanvas`) y canvas ambiental de partículas luminosas (`CotizadorAmbientCanvas`).
-* 🔒 **Entrada Táctil de Marca (Intro Loader):** Apertura cinemática de candado con GSAP que desbloquea la vista sin bloquear el scroll tras finalizar.
-* 🧩 **Componentes Reciclables:** Librería interna (`Button`, `Card`, `Badge`, `Input`) con contratos universales (`variant`, `width`, `height`, `className`, `children`, `icons`).
+* **Cotizador Automotor en Tiempo Real:** Asistente paso a paso (Wizard) de 4 etapas que calcula primas mensuales oficiales llamando al backend REST `POST /api/v1/cotizaciones/auto`.
+* **Catálogo Oficial de Autos de Argentina:** Base de datos interactiva con más de 20 marcas oficiales (Toyota, Volkswagen, Fiat, Ford, Chevrolet, Renault, etc.) y filtrado dependiente de modelos oficiales (Cronos, Hilux, 208, Amarok, Cruze).
+* **Marco Líquido Dinámico (Navbar Liquid Frame):** Barra de navegación flotante con indicador elástico continuo que rastrea la sección activa (`#hero`, `#servicios`, `#sobre-nosotros`, `#cotizador`) sin reinicios abruptos.
+* **Experiencia Visual Cinemática:** Fondo animado con ondas sinusoidales (`WaveCanvas`), constelaciones geométricas (`GeometryCanvas`) y canvas ambiental de partículas luminosas (`CotizadorAmbientCanvas`).
+* **Entrada Táctil de Marca (Intro Loader):** Apertura cinemática de candado con GSAP que desbloquea la vista sin bloquear el scroll tras finalizar.
+* **Componentes Reciclables:** Librería interna (`Button`, `Card`, `Badge`, `Input`) con contratos universales (`variant`, `width`, `height`, `className`, `children`, `icons`).
 
 ---
 
-## 🏛️ Arquitectura Feature-Based
+## Arquitectura Feature-Based
 
 ```mermaid
 graph TD
-    subgraph UI ["🎨 Presentación y UI Core"]
+    subgraph UI ["Presentacion y UI Core"]
         NAV["Navbar (Liquid Frame)"]
         HERO["HeroSection"]
         SRV["ServicesSection (WaveCanvas)"]
@@ -61,14 +61,14 @@ graph TD
         COT_SEC["CotizadorSection (AmbientCanvas)"]
     end
 
-    subgraph Feature ["🚗 Feature: Cotizador"]
+    subgraph Feature ["Feature: Cotizador"]
         HOOK["useCotizadorAuto (React Hook Form)"]
         VAL["Zod Schemas (CotizacionAutoSchema)"]
         DATA["marcasModelosArgentina.ts (Dataset Oficial)"]
-        STEPS["Steps: Titular ➔ Vehículo ➔ Cobertura ➔ Resumen"]
+        STEPS["Steps: Titular -> Vehiculo -> Cobertura -> Resumen"]
     end
 
-    subgraph API ["⚡ Conexión con Backend"]
+    subgraph API ["Conexion con Backend"]
         BACK["POST http://localhost:3000/api/v1/cotizaciones/auto"]
     end
 
@@ -101,7 +101,7 @@ src/
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### Prerrequisitos
 * **Node.js:** `>= 20.0.0`
@@ -135,7 +135,7 @@ Genera los artefactos optimizados en la carpeta `dist/` con análisis de tipos T
 
 ---
 
-## 🎨 Design System & Tokens
+## Design System & Tokens
 
 La identidad visual está unificada en `src/index.css` mediante la directiva `@theme` de Tailwind v4:
 
@@ -156,7 +156,7 @@ La identidad visual está unificada en `src/index.css` mediante la directiva `@t
 
 ---
 
-## 🛠️ Scripts Disponibles
+## Scripts Disponibles
 
 | Comando | Descripción |
 | :--- | :--- |
@@ -167,7 +167,7 @@ La identidad visual está unificada en `src/index.css` mediante la directiva `@t
 
 ---
 
-## 🧪 Testing y Calidad de Código
+## Testing y Calidad de Código
 
 El proyecto aplica tipado estricto sin concesiones:
 * Cero tolerancia a `any` o conversiones inseguras de tipo (`as`).
@@ -176,6 +176,6 @@ El proyecto aplica tipado estricto sin concesiones:
 
 ---
 
-## 📜 Licencia
+## Licencia
 
 Distribuido bajo la Licencia **MIT**. Consulta el archivo `LICENSE` para más información.

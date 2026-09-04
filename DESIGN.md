@@ -1,4 +1,4 @@
-# 🎨 SecureLife • Design System & UI Architecture (DESIGN.md)
+# SecureLife • Design System & UI Architecture (DESIGN.md)
 
 Este documento define la especificación oficial del **Sistema de Diseño (Design System)** de SecureLife, los tokens de marca en **Tailwind CSS v4**, la jerarquía tipográfica, el catálogo de componentes de interfaz y las directrices de animación e integración visual.
 
