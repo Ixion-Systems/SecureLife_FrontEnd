@@ -11,7 +11,7 @@
     <a href="#-inicio-rápido">Inicio Rápido</a> •
     <a href="#-arquitectura-feature-based">Arquitectura</a> •
     <a href="#-módulo-cotizador-automotor">Cotizador</a> •
-    <a href="#-design-system--tokens">Design System</a> •
+    <a href="./DESIGN.md">Design System (DESIGN.md)</a> •
     <a href="#-scripts-disponibles">Comandos</a> •
     <a href="#-licencia">Licencia</a>
   </p>
@@ -138,6 +138,9 @@ Genera los artefactos optimizados en la carpeta `dist/` con análisis de tipos T
 ## 🎨 Design System & Tokens
 
 La identidad visual está unificada en `src/index.css` mediante la directiva `@theme` de Tailwind v4:
+
+> [!TIP]
+> Para consultar la especificación detallada de tokens, catálogo completo de componentes reciclables (`src/components/ui/`), reglas de glassmorphism y directrices de conversión desde Google Stitch AI / Figma, revisa el documento maestro: **[DESIGN.md](./DESIGN.md)**.
 
 | Token | Color | Valor Hex | Uso Principal |
 | :--- | :---: | :---: | :--- |
