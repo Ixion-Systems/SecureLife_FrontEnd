@@ -3,9 +3,10 @@ import type { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from
 import { Car, Hash, Calendar, Gauge, Fuel } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { Combobox, type ComboboxOption } from '@/components/ui/Combobox';
 import type { CotizacionAutoFormData } from '../types/cotizacion-auto.types';
 import {
-  getMarcasNombres,
+  MARCAS_ARGENTINA,
   getModelosPorMarca,
 } from '../data/marcasModelosArgentina';
 
@@ -39,13 +40,47 @@ export const PasoVehiculo: React.FC<PasoVehiculoProps> = ({
 }) => {
   const tieneGnc = watch('vehiculo.tieneGnc');
   const marcaSeleccionada = watch('vehiculo.marca');
+  const modeloSeleccionado = watch('vehiculo.modelo');
   const anioActual = new Date().getFullYear();
 
-  const marcasList = useMemo(() => getMarcasNombres(), []);
+  const marcasOptions = useMemo<ComboboxOption[]>(() => {
+    return MARCAS_ARGENTINA.map((m) => ({
+      value: m.nombre,
+      label: m.nombre,
+      sublabel: `${m.modelos.length} modelos oficiales`,
+      badge: m.origenPrincipal || undefined,
+      icon: <Car className="w-3.5 h-3.5" />,
+    }));
+  }, []);
+
   const modelosSugeridos = useMemo(
     () => getModelosPorMarca(marcaSeleccionada),
     [marcaSeleccionada]
   );
+
+  const modelosOptions = useMemo<ComboboxOption[]>(() => {
+    if (!marcaSeleccionada) {
+      return [];
+    }
+    return modelosSugeridos.map((modelo) => ({
+      value: modelo,
+      label: modelo,
+      sublabel: `${marcaSeleccionada} • Línea oficial`,
+      icon: <Car className="w-3.5 h-3.5" />,
+    }));
+  }, [marcaSeleccionada, modelosSugeridos]);
+
+  const handleMarcaChange = (nuevaMarca: string) => {
+    setValue('vehiculo.marca', nuevaMarca, { shouldValidate: true, shouldDirty: true });
+    const nuevosModelos = getModelosPorMarca(nuevaMarca);
+    if (modeloSeleccionado && nuevosModelos.length > 0 && !nuevosModelos.includes(modeloSeleccionado)) {
+      setValue('vehiculo.modelo', '', { shouldValidate: false });
+    }
+  };
+
+  const handleModeloChange = (nuevoModelo: string) => {
+    setValue('vehiculo.modelo', nuevoModelo, { shouldValidate: true, shouldDirty: true });
+  };
 
   return (
     <div className="space-y-6 animate-slide-up">
@@ -61,6 +96,47 @@ export const PasoVehiculo: React.FC<PasoVehiculoProps> = ({
 
       {/* Inputs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+        {/* Fila 1: Marca Combobox */}
+        <Combobox
+          label="Marca del Vehículo"
+          placeholder="Seleccioná o escribí la marca (ej: Toyota, Fiat, VW...)"
+          required
+          value={marcaSeleccionada || ''}
+          onChange={handleMarcaChange}
+          options={marcasOptions}
+          leftIcon={<Car className="w-4 h-4" />}
+          defaultOptionIcon={<Car className="w-3.5 h-3.5" />}
+          error={errors.vehiculo?.marca?.message}
+          helperText="Todas las marcas oficiales en Argentina"
+          emptyMessage="No figura en el catálogo oficial de marcas"
+          emptyActionText="Usar esta marca personalizada"
+        />
+
+        {/* Fila 1: Modelo y Versión Combobox */}
+        <Combobox
+          label="Modelo y Versión"
+          placeholder={
+            modelosSugeridos.length > 0
+              ? `Modelos sugeridos para ${marcaSeleccionada}...`
+              : 'Ej: Cronos, Hilux, 208, Amarok, Cruze...'
+          }
+          required
+          value={modeloSeleccionado || ''}
+          onChange={handleModeloChange}
+          options={modelosOptions}
+          leftIcon={<Car className="w-4 h-4" />}
+          defaultOptionIcon={<Car className="w-3.5 h-3.5" />}
+          error={errors.vehiculo?.modelo?.message}
+          helperText={
+            modelosSugeridos.length > 0
+              ? `${modelosSugeridos.length} modelos sugeridos para ${marcaSeleccionada}`
+              : 'Escribí o seleccioná el modelo'
+          }
+          emptyMessage="No figura en el catálogo de modelos oficiales"
+          emptyActionText="Usar este modelo personalizado"
+        />
+
+        {/* Fila 2: Patente / Dominio */}
         <Input
           label="Patente / Dominio"
           placeholder="Ej: AB123CD o ORO123"
@@ -73,86 +149,7 @@ export const PasoVehiculo: React.FC<PasoVehiculoProps> = ({
           {...register('vehiculo.patente')}
         />
 
-        {/* Marca Selector */}
-        <div className="flex flex-col gap-1.5 text-left">
-          <label className="font-subtitle text-xs md:text-sm font-semibold text-[#0b1c30] tracking-wide flex items-center justify-between">
-            <span>Marca del Vehículo</span>
-            <span className="text-[#22c55e] text-xs font-normal">* Requerido</span>
-          </label>
-          <div className="relative flex items-center">
-            <div className="absolute left-3.5 flex items-center pointer-events-none text-gray-400">
-              <Car className="w-4 h-4" />
-            </div>
-            <input
-              list="marcas-argentina"
-              placeholder="Seleccioná o escribí la marca (ej: Toyota, Fiat, VW...)"
-              className={`w-full rounded-xl bg-white/80 backdrop-blur-md pl-10 pr-4 py-2.5 text-sm font-body text-[#0b1c30] placeholder:text-gray-400 border transition-all duration-200 outline-none
-                ${errors.vehiculo?.marca
-                  ? 'border-red-400 focus:border-red-500 bg-red-50/30'
-                  : 'border-white/80 focus:border-[#22c55e] focus:ring-2 focus:ring-[#22c55e]/20 hover:border-gray-300 shadow-inner'
-                }`}
-              {...register('vehiculo.marca')}
-            />
-            <datalist id="marcas-argentina">
-              {marcasList.map((marca) => (
-                <option key={marca} value={marca} />
-              ))}
-            </datalist>
-          </div>
-          {errors.vehiculo?.marca ? (
-            <p className="text-xs font-medium text-red-500 mt-0.5 animate-slide-up flex items-center gap-1">
-              <span>•</span> {errors.vehiculo.marca.message}
-            </p>
-          ) : (
-            <p className="text-[11px] text-gray-500">
-              Todas las marcas oficiales en Argentina
-            </p>
-          )}
-        </div>
-
-        {/* Modelo Selector (dinámico según marca) */}
-        <div className="flex flex-col gap-1.5 text-left">
-          <label className="font-subtitle text-xs md:text-sm font-semibold text-[#0b1c30] tracking-wide flex items-center justify-between">
-            <span>Modelo y Versión</span>
-            <span className="text-[#22c55e] text-xs font-normal">* Requerido</span>
-          </label>
-          <div className="relative flex items-center">
-            <div className="absolute left-3.5 flex items-center pointer-events-none text-gray-400">
-              <Car className="w-4 h-4" />
-            </div>
-            <input
-              list="modelos-argentina"
-              placeholder={
-                modelosSugeridos.length > 0
-                  ? `Modelos disponibles para ${marcaSeleccionada}...`
-                  : 'Ej: Cronos, Hilux, 208, Amarok, Cruze...'
-              }
-              className={`w-full rounded-xl bg-white/80 backdrop-blur-md pl-10 pr-4 py-2.5 text-sm font-body text-[#0b1c30] placeholder:text-gray-400 border transition-all duration-200 outline-none
-                ${errors.vehiculo?.modelo
-                  ? 'border-red-400 focus:border-red-500 bg-red-50/30'
-                  : 'border-white/80 focus:border-[#22c55e] focus:ring-2 focus:ring-[#22c55e]/20 hover:border-gray-300 shadow-inner'
-                }`}
-              {...register('vehiculo.modelo')}
-            />
-            <datalist id="modelos-argentina">
-              {modelosSugeridos.map((modelo) => (
-                <option key={modelo} value={modelo} />
-              ))}
-            </datalist>
-          </div>
-          {errors.vehiculo?.modelo ? (
-            <p className="text-xs font-medium text-red-500 mt-0.5 animate-slide-up flex items-center gap-1">
-              <span>•</span> {errors.vehiculo.modelo.message}
-            </p>
-          ) : (
-            <p className="text-[11px] text-gray-500">
-              {modelosSugeridos.length > 0
-                ? `${modelosSugeridos.length} modelos sugeridos para ${marcaSeleccionada}`
-                : 'Escribí o seleccioná el modelo'}
-            </p>
-          )}
-        </div>
-
+        {/* Fila 2: Año de Fabricación */}
         <Input
           label="Año de Fabricación"
           type="number"

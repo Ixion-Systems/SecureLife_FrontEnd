@@ -29,7 +29,6 @@ const INITIAL_FORM_VALUES: CotizacionAutoFormData = {
   conductoresAdicionales: [],
 };
 
-const API_ENDPOINT = 'http://localhost:3000/api/v1/cotizaciones/auto';
 
 /**
  * Custom Hook: useCotizadorAuto
@@ -75,13 +74,21 @@ export function useCotizadorAuto() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-      const response = await fetch(API_ENDPOINT, {
+      const response = await fetch('http://localhost:3000/api/v1/cotizador/calcular', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          marcaCodigo: formData.vehiculo.marca.toLowerCase(),
+          modeloCodigo: formData.vehiculo.modelo.toLowerCase(),
+          anio: Number(formData.vehiculo.anio),
+          planCobertura: formData.coberturaSolicitada,
+          tieneGnc: Boolean(formData.vehiculo.tieneGnc),
+          ajusteKm: Number(formData.vehiculo.kilometrajePromedioAnual || 15000),
+          codigoPostal: '1001',
+        }),
         signal: controller.signal,
       });
 
@@ -89,28 +96,21 @@ export function useCotizadorAuto() {
 
       if (response.ok) {
         const json = await response.json();
-        const raw = json.data || json;
+        const raw = json.data;
         const quoteResult: ResultadoCotizacion = {
-          id: raw.id || raw.cotizacionId || `COT-${Date.now()}`,
-          cobertura: raw.cobertura || formData.coberturaSolicitada,
-          primaMensualEstimada: raw.primaMensualEstimada ?? raw.primaMensual ?? 0,
-          sumaAsegurada: raw.sumaAsegurada ?? 0,
-          franquicia:
-            raw.franquicia !== undefined
-              ? raw.franquicia
-              : raw.franquiciaMonto && raw.franquiciaMonto > 0
-              ? raw.franquiciaMonto
-              : null,
+          id: `COT-${Date.now().toString().slice(-6)}`,
+          cobertura: formData.coberturaSolicitada,
+          primaMensualEstimada: raw.primaMensualEstimada,
+          sumaAsegurada: raw.sumaAsegurada,
+          franquicia: raw.franquicia > 0 ? raw.franquicia : null,
           desglose: {
-            premioBase: raw.desglose?.premioBase ?? raw.detalleCalculo?.base ?? 0,
-            recargoGnc: raw.desglose?.recargoGnc ?? raw.detalleCalculo?.recargoGnc ?? 0,
-            ajusteKilometraje:
-              raw.desglose?.ajusteKilometraje ??
-              (raw.detalleCalculo?.bonificacion ? -raw.detalleCalculo.bonificacion : 0),
-            recargoConductores: raw.desglose?.recargoConductores ?? 0,
-            impuestos: raw.desglose?.impuestos ?? raw.detalleCalculo?.impuestos ?? 0,
+            premioBase: raw.desglose?.premioBase ?? 0,
+            recargoGnc: raw.desglose?.recargoGnc ?? 0,
+            ajusteKilometraje: raw.desglose?.ajusteKilometraje ?? 0,
+            recargoConductores: formData.conductoresAdicionales.length * 3500,
+            impuestos: raw.desglose?.impuestos ?? 0,
           },
-          fechaCalculo: raw.fechaCalculo || new Date().toISOString(),
+          fechaCalculo: new Date().toISOString(),
           origen: 'api',
         };
         setAsyncState({ status: 'success', data: quoteResult, error: null });

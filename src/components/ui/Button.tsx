@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'glass' | 'outline';
+export type ButtonVariant = 'primary' | 'forest' | 'secondary' | 'glass' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,10 +17,11 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
-  primary: 'bg-[#22c55e] text-[#004b1e] hover:bg-[#4ae176] shadow-lg shadow-[#22c55e]/25 font-semibold',
-  secondary: 'bg-[#0b1c30] text-white hover:bg-[#213145] font-semibold',
-  glass: 'glass-surface text-[#006e2f] hover:bg-white/70 hover:-translate-y-0.5 border border-white/60 font-semibold',
-  outline: 'bg-transparent text-[#006e2f] border border-[#006e2f] hover:bg-[#eff4ff] font-semibold',
+  primary: 'bg-[#22c55e] text-[#004b1e] hover:bg-[#16a34a] shadow-lg shadow-[#22c55e]/25 font-semibold hover:-translate-y-0.5',
+  forest: 'bg-[#004b1e] text-white hover:bg-[#003816] hover:shadow-lg shadow-md shadow-[#004b1e]/20 font-semibold hover:-translate-y-0.5',
+  secondary: 'bg-[#0b1c30] text-white hover:bg-[#213145] font-semibold hover:-translate-y-0.5',
+  glass: 'glass-surface text-[#006e2f] hover:bg-white/90 hover:-translate-y-0.5 border border-white/60 font-semibold shadow-sm',
+  outline: 'bg-transparent text-[#006e2f] border border-[#006e2f] hover:bg-[#eff4ff] font-semibold hover:-translate-y-0.5',
 };
 
 const SIZE_STYLES: Record<ButtonSize, string> = {

@@ -93,7 +93,7 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
       role="dialog"
       aria-modal="true"
       aria-labelledby="cotizador-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-scale-in"
+      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 md:p-6 overflow-y-auto custom-scrollbar animate-scale-in"
     >
       {/* Dark/Blur Glass Backdrop */}
       <div
@@ -104,20 +104,25 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
       {/* Main Modal Container */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col bg-[#f8f9ff]/95 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-[#0b1c30]/25 overflow-hidden z-10 my-auto"
+        className="relative w-full max-w-4xl flex flex-col bg-[#f8f9ff]/95 backdrop-blur-2xl rounded-3xl border border-white/80 shadow-2xl shadow-[#0b1c30]/25 z-10 my-4 sm:my-8 transition-all"
       >
         {/* Modal Top Bar */}
-        <div className="px-6 py-4 border-b border-gray-200/70 bg-white/70 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200/70 bg-white/70 backdrop-blur-md rounded-t-3xl flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#006e2f] to-[#22c55e] flex items-center justify-center p-1.5 shadow-sm">
               <img src="/LOGO.svg" alt="SecureLife" className="w-full h-full object-contain" />
             </div>
             <div className="text-left">
-              <h2 id="cotizador-title" className="font-title text-base sm:text-lg font-bold text-[#0b1c30] leading-tight">
-                Cotizador de Seguro Automotor
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 id="cotizador-title" className="font-title text-base sm:text-lg font-bold text-[#0b1c30] leading-tight">
+                  Simulador de Seguro Automotor
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-subtitle font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  DEMO
+                </span>
+              </div>
               <span className="font-body text-xs text-gray-500">
-                SecureLife • Emisión 100% Digital e Inmediata
+                SecureLife • Cotización Estimada en Tiempo Real
               </span>
             </div>
           </div>
@@ -130,7 +135,7 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
               type="button"
               onClick={onClose}
               aria-label="Cerrar modal"
-              className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -138,7 +143,7 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Step Progress Indicators */}
-        <div className="px-6 py-3.5 bg-white/40 border-b border-gray-100 shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 bg-white/40 border-b border-gray-100 shrink-0">
           <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-2xl mx-auto">
             {STEPS_META.map((step) => {
               const isCompleted = currentStep > step.number;
@@ -187,8 +192,8 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        {/* Modal Scrollable Content Body */}
-        <div className="p-6 md:p-8 overflow-y-auto flex-grow custom-scrollbar">
+        {/* Modal Natural Height Content Body */}
+        <div className="p-4 sm:p-6 md:p-8 flex-grow">
           {currentStep === 1 && (
             <PasoTitular register={register} errors={errors} />
           )}
@@ -226,7 +231,7 @@ export const CotizadorModal: React.FC<CotizadorModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="px-6 py-4 bg-white/70 backdrop-blur-md border-t border-gray-200/70 flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-4 bg-white/70 backdrop-blur-md border-t border-gray-200/70 rounded-b-3xl flex items-center justify-between shrink-0">
           <div>
             {currentStep > 1 && !isLastStep && (
               <Button
