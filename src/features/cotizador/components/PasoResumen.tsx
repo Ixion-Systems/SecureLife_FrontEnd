@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import {
-  CheckCircle,
   FileCheck,
-  Download,
   PhoneCall,
-  RotateCcw,
-  Sparkles,
-  Info,
   Car,
   User,
   ShieldCheck,
@@ -22,6 +17,9 @@ import {
   formatCurrencyARS,
   COBERTURA_LABELS,
 } from '../utils/calculoCotizacion';
+import { ResumenLoadingView } from './ResumenLoadingView';
+import { ResumenErrorView } from './ResumenErrorView';
+import { ResumenContratadoView } from './ResumenContratadoView';
 
 export interface PasoResumenProps {
   formData: CotizacionAutoFormData;
@@ -43,7 +41,7 @@ export interface PasoResumenProps {
  * @module features/cotizador/components/PasoResumen
  * 
  * @param {PasoResumenProps} props - Component properties.
- * @returns {React.ReactElement} Form step view with quote breakdown.
+ * @returns {React.ReactElement | null} Form step view with quote breakdown.
  */
 export const PasoResumen: React.FC<PasoResumenProps> = ({
   formData,
@@ -54,55 +52,33 @@ export const PasoResumen: React.FC<PasoResumenProps> = ({
 }) => {
   const [contratado, setContratado] = useState(false);
 
-  // 1. Loading State
+  // 1. CONDITIONAL RENDERS (EARLY RETURNS)
   if (asyncState.status === 'loading') {
-    return (
-      <div className="py-16 flex flex-col items-center justify-center text-center space-y-4 animate-slide-up">
-        <div className="relative w-16 h-16">
-          <div className="w-16 h-16 rounded-full border-4 border-[#22c55e]/20 border-t-[#22c55e] animate-spin" />
-          <div className="absolute inset-0 flex items-center justify-center text-[#006e2f]">
-            <Sparkles className="w-6 h-6 animate-pulse" />
-          </div>
-        </div>
-        <div>
-          <h3 className="font-title text-xl font-bold text-[#0b1c30]">
-            Calculando tu Cotización Personalizada...
-          </h3>
-          <p className="font-subtitle text-sm text-gray-500 mt-1">
-            Analizando valores de mercado, scoring del vehículo y condiciones óptimas.
-          </p>
-        </div>
-      </div>
-    );
+    return <ResumenLoadingView />;
   }
 
-  // 2. Error State
   if (asyncState.status === 'error') {
     return (
-      <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 animate-slide-up">
-        <div className="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
-          <Info className="w-8 h-8" />
-        </div>
-        <h3 className="font-title text-xl font-bold text-[#0b1c30]">
-          No pudimos calcular la cotización en este momento
-        </h3>
-        <p className="font-body text-sm text-gray-600 max-w-md">
-          {asyncState.error || 'Ocurrió un error inesperado al procesar los datos.'}
-        </p>
-        <div className="flex gap-3 pt-2">
-          <Button variant="primary" onClick={onRetry} leftIcon={<RotateCcw className="w-4 h-4" />}>
-            Reintentar Cálculo
-          </Button>
-          <Button variant="outline" onClick={onReset}>
-            Modificar Datos
-          </Button>
-        </div>
-      </div>
+      <ResumenErrorView
+        error={asyncState.error}
+        onRetry={onRetry}
+        onReset={onReset}
+      />
     );
   }
 
   const quote = asyncState.data;
   if (!quote) return null;
+
+  if (contratado) {
+    return (
+      <ResumenContratadoView
+        formData={formData}
+        quote={quote}
+        onClose={onClose}
+      />
+    );
+  }
 
   const coberturaInfo =
     (quote.cobertura && COBERTURA_LABELS[quote.cobertura]) || {
@@ -111,62 +87,7 @@ export const PasoResumen: React.FC<PasoResumenProps> = ({
       badge: 'Recomendado',
     };
 
-  // 3. Success State: Contract Confirmed
-  if (contratado) {
-    return (
-      <div className="py-10 flex flex-col items-center justify-center text-center space-y-6 animate-slide-up">
-        <div className="w-20 h-20 rounded-full bg-[#22c55e]/20 text-[#006e2f] flex items-center justify-center border-2 border-[#22c55e] shadow-lg shadow-[#22c55e]/25">
-          <CheckCircle className="w-10 h-10" />
-        </div>
-        <div>
-          <Badge variant="primary" className="mb-2">
-            Póliza Emitida con Éxito
-          </Badge>
-          <h3 className="font-title text-2xl md:text-3xl font-bold text-[#0b1c30]">
-            ¡Felicitaciones, {formData.titular.nombreCompleto}!
-          </h3>
-          <p className="font-subtitle text-sm md:text-base text-gray-600 max-w-lg mt-2">
-            Hemos registrado tu solicitud con número <strong className="text-[#006e2f]">{quote.id}</strong>.
-            Enviamos el certificado de cobertura provisorio y los cupones de pago a <strong>{formData.titular.email}</strong>.
-          </p>
-        </div>
-
-        <Card variant="white" className="p-4 rounded-2xl max-w-md w-full border-gray-200 text-left space-y-2">
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>Vehículo:</span>
-            <span className="font-semibold text-[#0b1c30]">{formData.vehiculo.marca} {formData.vehiculo.modelo} ({formData.vehiculo.anio})</span>
-          </div>
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>Patente:</span>
-            <span className="font-mono font-bold text-[#0b1c30] uppercase">{formData.vehiculo.patente}</span>
-          </div>
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>Prima Mensual:</span>
-            <span className="font-bold text-[#006e2f]">{formatCurrencyARS(quote.primaMensualEstimada)}</span>
-          </div>
-        </Card>
-
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full justify-center">
-          <Button
-            variant="primary"
-            onClick={onClose}
-            rightIcon={<FileCheck className="w-4 h-4" />}
-          >
-            Finalizar y Volver al Sitio
-          </Button>
-          <Button
-            variant="glass"
-            onClick={() => alert(`Descargando póliza oficial #${quote.id} en formato PDF...`)}
-            leftIcon={<Download className="w-4 h-4 text-[#006e2f]" />}
-          >
-            Descargar Póliza (PDF)
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // 4. Normal Step 4: Full Breakdown View
+  // 2. MAIN RENDER: FULL BREAKDOWN VIEW
   return (
     <div className="space-y-6 animate-slide-up text-left">
       {/* Header Info */}
@@ -194,7 +115,7 @@ export const PasoResumen: React.FC<PasoResumenProps> = ({
 
       {/* Main Highlights Hero Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Prima Mensual Grande */}
+        {/* Prima Mensual Destacada */}
         <div className="md:col-span-1 rounded-2xl p-6 bg-gradient-to-br from-[#005321] to-[#006e2f] text-white shadow-xl shadow-[#006e2f]/20 flex flex-col justify-between">
           <div>
             <span className="text-xs uppercase font-subtitle font-bold text-emerald-300 tracking-wider">
@@ -386,7 +307,7 @@ export const PasoResumen: React.FC<PasoResumenProps> = ({
           rightIcon={<FileCheck className="w-5 h-5" />}
           className="w-full sm:w-auto shadow-lg shadow-[#22c55e]/25 text-sm font-bold"
         >
-          Contratar Póliza Inmediata
+          Continuar a Contratación
         </Button>
       </div>
     </div>

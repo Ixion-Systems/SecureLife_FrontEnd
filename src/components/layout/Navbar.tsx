@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { BrandLogo } from '@/components/ui/BrandLogo';
+import { useLiquidNavIndicator } from '@/hooks/useLiquidNavIndicator';
 
 export interface NavbarProps {
   onLoginClick?: () => void;
   onSignUpClick?: () => void;
 }
 
-interface NavItem {
-  id: string;
-  label: string;
-  href: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
+const NAV_ITEMS = [
   { id: 'hero', label: 'Inicio', href: '#hero' },
   { id: 'servicios', label: 'Servicios', href: '#servicios' },
   { id: 'sobre-nosotros', label: 'Sobre Nosotros', href: '#sobre-nosotros' },
@@ -24,9 +21,9 @@ const NAV_ITEMS: NavItem[] = [
  * Navbar Component
  * 
  * Top responsive navigation bar featuring:
- * - Continuous sliding liquid frame ("marco líquido") across sections from origin to destination without restarts.
- * - Hover changes text color only.
- * - Dual action buttons: Login and Sign Up.
+ * - Continuous sliding liquid frame ("marco líquido") across sections powered by useLiquidNavIndicator.
+ * - Single-responsibility layout and navigation routing.
+ * - Mobile responsive drawer with accessible toggling.
  *
  * @component
  * @layer Layout
@@ -36,109 +33,37 @@ const NAV_ITEMS: NavItem[] = [
  * @returns {React.ReactElement} Navigation bar element.
  */
 export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) => {
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('hero');
-  
-  const navTrackRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
-  const isNavClickingRef = useRef<boolean>(false);
-  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [frameStyle, setFrameStyle] = useState<{
-    left: number;
-    width: number;
-    height: number;
-    opacity: number;
-  }>({
-    left: 0,
-    width: 0,
-    height: 0,
-    opacity: 0,
-  });
+  const {
+    activeSection,
+    frameStyle,
+    itemRefs,
+    navTrackRef,
+    handleNavClick: baseNavClick,
+  } = useLiquidNavIndicator(NAV_ITEMS, 'hero');
 
-  // Calculate position of the active frame relative to track container
-  const updateFramePosition = (sectionId: string) => {
-    const activeEl = itemRefs.current[sectionId];
-    const trackEl = navTrackRef.current;
-
-    if (activeEl && trackEl) {
-      const activeRect = activeEl.getBoundingClientRect();
-      const trackRect = trackEl.getBoundingClientRect();
-
-      setFrameStyle({
-        left: activeRect.left - trackRect.left,
-        width: activeRect.width,
-        height: activeRect.height,
-        opacity: 1,
-      });
+  const handleLogin = () => {
+    if (onLoginClick) {
+      onLoginClick();
+    } else {
+      navigate('/login');
     }
   };
 
-  // Update on activeSection change and window resize
-  useEffect(() => {
-    updateFramePosition(activeSection);
-
-    const handleResize = () => {
-      updateFramePosition(activeSection);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [activeSection]);
-
-  // Initial measurement after layout mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateFramePosition('hero');
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Monitor scroll position to detect current section in view (ignored during smooth clicks)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isNavClickingRef.current) return;
-
-      const scrollPosition = window.scrollY + 220;
-      const sections = NAV_ITEMS.map((item) => document.querySelector(item.href) as HTMLElement | null);
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section && section.offsetTop <= scrollPosition) {
-          if (activeSection !== NAV_ITEMS[i].id) {
-            setActiveSection(NAV_ITEMS[i].id);
-          }
-          break;
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeSection]);
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
-    e.preventDefault();
-
-    // Lock scroll listener to prevent it from interrupting the transition midway
-    isNavClickingRef.current = true;
-    if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
-
-    setActiveSection(id);
-    updateFramePosition(id);
-    setMobileMenuOpen(false);
-
-    if (href === '#hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleSignUp = () => {
+    if (onSignUpClick) {
+      onSignUpClick();
     } else {
-      const element = document.querySelector(href);
-      element?.scrollIntoView({ behavior: 'smooth' });
+      navigate('/signup');
     }
+  };
 
-    // Release scroll lock once smooth scroll has finished
-    clickTimeoutRef.current = setTimeout(() => {
-      isNavClickingRef.current = false;
-    }, 850);
+  const onNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    baseNavClick(href, id);
   };
 
   return (
@@ -150,36 +75,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
         {/* Brand Logo */}
         <a
           href="#hero"
-          onClick={(e) => handleNavClick(e, '#hero', 'hero')}
-          className="flex items-center gap-2.5 group"
+          onClick={(e) => onNavClick(e, '#hero', 'hero')}
+          className="flex items-center cursor-pointer group select-none hover:opacity-90 transition-opacity"
         >
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#006e2f] to-[#22c55e] flex items-center justify-center text-white shadow-md shadow-[#22c55e]/25 group-hover:scale-105 transition-transform duration-300 p-2">
-            <img src="/LOGO.svg" alt="SecureLife Logo" className="w-5 h-6 object-contain" />
-          </div>
-          <span className="font-title font-black text-2xl tracking-tight text-[#006e2f]">
-            Secure<span className="text-[#0b1c30]">Life</span>
-          </span>
+          <BrandLogo variant="green" className="h-10" />
         </a>
 
-        {/* Desktop Navigation Links with Sliding Liquid Frame Track */}
+        {/* Desktop Nav Track with Moving Liquid Frame */}
         <div
           ref={navTrackRef}
-          className="hidden md:flex items-center relative p-1.5 rounded-full bg-white/50 backdrop-blur-md border border-white/70 shadow-inner"
+          className="hidden md:flex relative items-center bg-[#eaeef7]/80 backdrop-blur-md p-1.5 rounded-full border border-white/70 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
         >
-          {/* Continuous Sliding Liquid Frame (Marco Líquido de origen a destino continuo) */}
+          {/* Continuous Sliding Liquid Frame */}
           <span
+            className="absolute top-0 left-0 rounded-full pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0
+              bg-white shadow-[0_2px_8px_rgba(0,110,47,0.12),0_1px_3px_rgba(0,0,0,0.08)]
+              border border-[#22c55e]/40"
             style={{
-              transform: `translateX(${frameStyle.left}px)`,
+              transform: `translate3d(${frameStyle.left}px, ${frameStyle.top}px, 0)`,
               width: `${frameStyle.width}px`,
               height: `${frameStyle.height}px`,
               opacity: frameStyle.opacity,
-              willChange: 'transform, width',
             }}
-            className="absolute top-1.5 left-0 rounded-full bg-gradient-to-r from-[#22c55e]/15 via-[#10b981]/22 to-[#22c55e]/15 border-1.5 border-[#22c55e]/60 shadow-[0_0_18px_rgba(34,197,94,0.35)] backdrop-blur-sm pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.34,1.4,0.64,1)] z-0"
           >
-            {/* Liquid Glow Droplet Accent */}
-            <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full bg-[#22c55e]/70 blur-[1px] animate-pulse" />
-            <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-2 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]" />
+            {/* Subtle top glare */}
+            <span className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
           </span>
 
           {/* Links: hover only affects text color */}
@@ -193,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
                   itemRefs.current[item.id] = el;
                 }}
                 href={item.href}
-                onClick={(e) => handleNavClick(e, item.href, item.id)}
+                onClick={(e) => onNavClick(e, item.href, item.id)}
                 className={`relative z-10 px-5 py-2 text-sm font-subtitle font-semibold rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 ${
                   isCurrentlyActive
                     ? 'text-[#006e2f] font-bold'
@@ -211,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
           <Button
             variant="glass"
             size="sm"
-            onClick={onLoginClick}
+            onClick={handleLogin}
             className="font-body border-[#006e2f]/40 hover:border-[#006e2f] text-[#006e2f] shadow-sm px-4 py-2"
           >
             Login
@@ -221,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
             variant="primary"
             size="sm"
             glow
-            onClick={onSignUpClick}
+            onClick={handleSignUp}
             className="font-body bg-[#22c55e] text-[#004b1e] hover:bg-[#16a34a] shadow-md shadow-[#22c55e]/25 font-bold px-4 py-2"
           >
             Sign Up
@@ -245,7 +165,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
             <a
               key={item.id}
               href={item.href}
-              onClick={(e) => handleNavClick(e, item.href, item.id)}
+              onClick={(e) => onNavClick(e, item.href, item.id)}
               className={`font-subtitle font-semibold text-base py-2.5 px-4 rounded-xl transition-all ${
                 activeSection === item.id
                   ? 'bg-[#22c55e]/15 text-[#006e2f] font-bold border border-[#22c55e]/30'
@@ -261,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
             <Button
               variant="glass"
               size="sm"
-              onClick={onLoginClick}
+              onClick={handleLogin}
               className="flex-1 font-body text-[#006e2f]"
             >
               Login
@@ -270,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onSignUpClick }) =
               variant="primary"
               size="sm"
               glow
-              onClick={onSignUpClick}
+              onClick={handleSignUp}
               className="flex-1 font-body font-bold"
             >
               Sign Up

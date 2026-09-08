@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowLeft, ArrowRight, Calculator, Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { CotizadorAmbientCanvas } from '@/components/animations/CotizadorAmbientCanvas';
 import { useCotizadorAuto } from '@/features/cotizador/hooks/useCotizadorAuto';
 import { PasoTitular } from '@/features/cotizador/components/PasoTitular';
@@ -57,6 +58,7 @@ export const CotizadorSection: React.FC = () => {
     form,
   } = useCotizadorAuto();
 
+  const cardRef = useRef<HTMLDivElement>(null);
   const isLastStep = currentStep === 4;
 
   const handleScrollToTop = () => {
@@ -93,10 +95,13 @@ export const CotizadorSection: React.FC = () => {
         </p>
       </div>
 
-      {/* 3. Cotizador Card (Constrained with max-h-[85vh] and internal scroll) */}
-      <div className="w-full max-w-4xl max-h-[85vh] flex flex-col bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-2xl shadow-[#0b1c30]/12 overflow-hidden relative z-10">
+      {/* 3. Cotizador Card (Natural full-height without internal scroll) */}
+      <div
+        ref={cardRef}
+        className="w-full max-w-4xl flex flex-col bg-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-2xl shadow-[#0b1c30]/12 relative z-10"
+      >
         {/* Card Header & Brand Bar */}
-        <div className="px-6 py-4 border-b border-gray-200/70 bg-white/75 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200/70 bg-white/75 backdrop-blur-md rounded-t-3xl flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#006e2f] to-[#22c55e] flex items-center justify-center p-1.5 shadow-sm">
               <img src="/LOGO.svg" alt="SecureLife" className="w-full h-full object-contain" />
@@ -168,8 +173,8 @@ export const CotizadorSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Scrollable Form Body */}
-        <div className="p-6 md:p-8 overflow-y-auto flex-grow custom-scrollbar text-left">
+        {/* Natural Height Form Body */}
+        <div className="p-4 sm:p-6 md:p-8 text-left">
           {currentStep === 1 && (
             <PasoTitular register={register} errors={errors} />
           )}
@@ -207,7 +212,7 @@ export const CotizadorSection: React.FC = () => {
         </div>
 
         {/* Footer Navigation Controls */}
-        <div className="px-6 py-4 bg-white/75 backdrop-blur-md border-t border-gray-200/70 flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-4 bg-white/75 backdrop-blur-md border-t border-gray-200/70 rounded-b-3xl flex items-center justify-between shrink-0">
           <div>
             {currentStep > 1 && !isLastStep && (
               <Button
@@ -259,6 +264,14 @@ export const CotizadorSection: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Dynamic Scroll Cue when form extends below viewport */}
+      <ScrollIndicator
+        text="El formulario sigue debajo"
+        watchRef={cardRef}
+        scrollAmount={380}
+        position="floating"
+      />
     </section>
   );
 };

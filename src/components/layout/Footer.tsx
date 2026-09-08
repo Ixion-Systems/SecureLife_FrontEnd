@@ -1,12 +1,16 @@
 import React from 'react';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 /**
  * Footer Component
  * 
- * Standard responsive footer displaying copyright and navigation legal links.
- *
+ * Clean, modern footer containing:
+ * - Brand logo and corporate identity.
+ * - Concise copyright notice.
+ * - Legal and navigational links.
+ * 
  * @component
- * @layer Layout
+ * @layer Presentation / Layout
  * @module components/layout/Footer
  * 
  * @returns {React.ReactElement} Footer element.
@@ -14,13 +18,8 @@ import React from 'react';
 export const Footer: React.FC = () => {
   return (
     <footer className="w-full py-12 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#eff4ff] border-t border-gray-200/60 relative z-20">
-      <div className="flex items-center gap-2.5 mb-2 md:mb-0">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#006e2f] to-[#22c55e] flex items-center justify-center text-white shadow-sm p-1.5">
-          <img src="/LOGO.svg" alt="SecureLife Logo" className="w-full h-full object-contain" />
-        </div>
-        <span className="font-title font-black text-2xl text-[#006e2f] tracking-tight">
-          Secure<span className="text-[#0b1c30]">Life</span>
-        </span>
+      <div className="flex items-center mb-2 md:mb-0">
+        <BrandLogo variant="green" className="h-9" />
       </div>
 
       <p className="font-body text-sm text-gray-500 text-center md:text-left order-3 md:order-2 max-w-md">

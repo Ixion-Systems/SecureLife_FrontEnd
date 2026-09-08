@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { PageIntroLoader } from '@/components/animations/PageIntroLoader';
 import { CotizadorModal } from '@/features/cotizador';
 import { HeroSection } from './components/HeroSection';
 import { ServicesSection } from './components/ServicesSection';
@@ -14,7 +14,7 @@ import { CotizadorSection } from './components/CotizadorSection';
  * Main public entry page for SecureLife platform.
  * Orchestrates Navbar, Hero section, dynamic services coverage,
  * animated About Us section, the interactive Auto Insurance Quoting Section (CotizadorSection),
- * footer, and modular GSAP intro loader.
+ * and footer.
  *
  * @component
  * @layer Presentation / Feature View
@@ -23,6 +23,7 @@ import { CotizadorSection } from './components/CotizadorSection';
  * @returns {React.ReactElement} The full landing page view.
  */
 export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [isCotizadorModalOpen, setIsCotizadorModalOpen] = useState(false);
 
   const handleScrollToCotizador = () => {
@@ -38,21 +39,15 @@ export const LandingPage: React.FC = () => {
   };
 
   const handleLoginClick = () => {
-    alert('Acción de Login seleccionada (Módulo de Autenticación)');
+    navigate('/login');
   };
 
   const handleSignUpClick = () => {
-    alert('Acción de Registro / Sign Up seleccionada');
+    navigate('/signup');
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9ff]">
-      {/* 
-        Modular Brand GSAP Intro Animation Loader:
-        Can be toggled via the `enabled` prop or by setting ENABLE_PAGE_INTRO in PageIntroLoader.tsx 
-      */}
-      <PageIntroLoader />
-
       {/* Top Fixed Navigation with Liquid Animated Frame & Action Buttons */}
       <Navbar
         onLoginClick={handleLoginClick}

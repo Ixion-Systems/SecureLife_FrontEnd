@@ -3,6 +3,7 @@ import { ArrowRight, Headphones, Shield, Zap, LifeBuoy, ShieldCheck } from 'luci
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
+import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 
 export interface HeroSectionProps {
   onExplorePlan?: () => void;
@@ -169,6 +170,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </Card>
           </div>
         </div>
+      </div>
+
+      {/* Animated Scroll Indicator */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20">
+        <ScrollIndicator
+          text="Deslizá para cotizar"
+          targetId="servicios"
+          scrollAmount={550}
+          position="inline"
+        />
       </div>
     </section>
   );
