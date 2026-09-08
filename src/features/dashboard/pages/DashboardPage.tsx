@@ -23,6 +23,8 @@ import { RecentActivityTimeline } from '../components/RecentActivityTimeline';
 import { SelectAssetModal, type AssetType } from '../components/SelectAssetModal';
 import { CotizacionAutoModal } from '../components/cotizacion-auto';
 import { CotizacionInmuebleModal } from '../components/cotizacion-inmueble';
+import { CotizacionVidaModal } from '../components/cotizacion-vida';
+import { CotizacionObjetoModal } from '../components/cotizacion-objeto';
 import { authStorage } from '@/features/auth/services/authStorage';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { Button } from '../../../components/ui/Button';
@@ -42,6 +44,8 @@ export const DashboardPage: React.FC = () => {
   const [isSelectAssetOpen, setIsSelectAssetOpen] = useState(false);
   const [isCotizacionAutoOpen, setIsCotizacionAutoOpen] = useState(false);
   const [isCotizacionInmuebleOpen, setIsCotizacionInmuebleOpen] = useState(false);
+  const [isCotizacionVidaOpen, setIsCotizacionVidaOpen] = useState(false);
+  const [isCotizacionObjetoOpen, setIsCotizacionObjetoOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -355,7 +359,9 @@ export const DashboardPage: React.FC = () => {
                   ? '. Puedes iniciar el asistente de cotización interactivo de inmediato.'
                   : selectedAssetType === 'HOGAR_INMUEBLE'
                   ? '. Puedes iniciar el asistente de cotización e inspección digital de tu inmueble.'
-                  : '. Ramo en proceso de parametrización actuarial.'}
+                  : selectedAssetType === 'VIDA'
+                  ? '. Puedes iniciar el asistente de cotización de vida y designación de beneficiarios.'
+                  : '. Puedes iniciar el asistente de cotización y cotejo IMEI de tecnología y objetos.'}
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
@@ -377,6 +383,26 @@ export const DashboardPage: React.FC = () => {
                   className="!py-1.5 !px-3 !text-xs !rounded-xl"
                 >
                   Abrir Cotizador Hogar
+                </Button>
+              )}
+              {selectedAssetType === 'VIDA' && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setIsCotizacionVidaOpen(true)}
+                  className="!py-1.5 !px-3 !text-xs !rounded-xl"
+                >
+                  Abrir Cotizador Vida
+                </Button>
+              )}
+              {selectedAssetType === 'OBJETO_PERSONAL' && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setIsCotizacionObjetoOpen(true)}
+                  className="!py-1.5 !px-3 !text-xs !rounded-xl"
+                >
+                  Abrir Cotizador Objetos
                 </Button>
               )}
               <button
@@ -776,6 +802,10 @@ export const DashboardPage: React.FC = () => {
             setIsCotizacionAutoOpen(true);
           } else if (type === 'HOGAR_INMUEBLE') {
             setIsCotizacionInmuebleOpen(true);
+          } else if (type === 'VIDA') {
+            setIsCotizacionVidaOpen(true);
+          } else if (type === 'OBJETO_PERSONAL') {
+            setIsCotizacionObjetoOpen(true);
           }
         }}
       />
@@ -803,6 +833,30 @@ export const DashboardPage: React.FC = () => {
           refresh();
           setNotification(
             '¡Cotización de Hogar radicada con éxito! Tu expediente quedó en estado "Pendiente de Inspección Técnica (24-48 hs)".'
+          );
+        }}
+      />
+
+      {/* MODAL: COTIZADOR OFICIAL MULTIPASO SEGURO DE VIDA */}
+      <CotizacionVidaModal
+        isOpen={isCotizacionVidaOpen}
+        onClose={() => setIsCotizacionVidaOpen(false)}
+        onSuccess={() => {
+          refresh();
+          setNotification(
+            '¡Cotización de Seguro de Vida radicada con éxito! Tu expediente digital ha ingresado a suscripción técnica.'
+          );
+        }}
+      />
+
+      {/* MODAL: COTIZADOR OFICIAL MULTIPASO TECNOLOGÍA Y OBJETOS PERSONALES */}
+      <CotizacionObjetoModal
+        isOpen={isCotizacionObjetoOpen}
+        onClose={() => setIsCotizacionObjetoOpen(false)}
+        onSuccess={() => {
+          refresh();
+          setNotification(
+            '¡Cotización de Tecnología y Objetos radicada con éxito! La mesa pericial validará el IMEI y comprobantes en 24 hs.'
           );
         }}
       />
