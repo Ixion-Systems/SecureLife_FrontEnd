@@ -9,6 +9,7 @@ import {
   LogOut,
   ChevronRight,
   User,
+  X,
 } from 'lucide-react';
 import { BrandLogo } from '../../../components/ui/BrandLogo';
 import type { DashboardTab, UserSummary } from '../types/dashboard.types';
@@ -85,8 +86,9 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             <button
               onClick={onCloseMobile}
               className="lg:hidden p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10"
+              aria-label="Cerrar menú lateral"
             >
-              ✕
+              <X className="w-5 h-5" />
             </button>
           )}
         </div>

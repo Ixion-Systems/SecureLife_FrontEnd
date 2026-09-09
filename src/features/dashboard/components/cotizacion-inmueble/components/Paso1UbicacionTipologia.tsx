@@ -11,6 +11,7 @@ import {
   Layers,
   Flame,
   ShieldAlert,
+  Check,
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -298,9 +299,10 @@ export const Paso1UbicacionTipologia: React.FC<Paso1UbicacionTipologiaProps> = (
                 <button
                   type="button"
                   onClick={onAplicarSugeridos}
-                  className="block mt-1 font-semibold text-[#006e2f] hover:underline cursor-pointer text-[11px]"
+                  className="inline-flex items-center gap-1 mt-1 font-semibold text-[#006e2f] hover:underline cursor-pointer text-[11px]"
                 >
-                  ✓ Reajustar sumas aseguradas con este valor
+                  <Check className="w-3.5 h-3.5 text-[#006e2f]" />
+                  Reajustar sumas aseguradas con este valor
                 </button>
               </div>
             </div>

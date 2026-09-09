@@ -24,29 +24,35 @@ export function useDashboardData() {
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null);
   const [policies, setPolicies] = useState<ApiPolicy[]>([]);
   const [activity, setActivity] = useState<ApiActivity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => authStorage.isAuthenticated());
   const [error, setError] = useState<string | null>(null);
-  const isMountedRef = useRef(true);
+  const isMountedRef = useRef<boolean>(true);
 
-  const loadData = useCallback(async (isRefresh = false) => {
-    if (isRefresh) {
+  const loadData = useCallback(async (signal?: AbortSignal) => {
+    if (!authStorage.isAuthenticated()) {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+        setSummary(null);
+        setPolicies([]);
+        setActivity([]);
+        setError(null);
+      }
+      return;
+    }
+
+    if (isMountedRef.current) {
       setIsLoading(true);
       setError(null);
     }
 
-    if (!authStorage.isAuthenticated()) {
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const results = await Promise.allSettled([
-        fetchDashboardSummary(),
-        fetchClientPolicies(),
-        fetchClientActivity(10),
+        fetchDashboardSummary(signal),
+        fetchClientPolicies(signal),
+        fetchClientActivity(10, signal),
       ]);
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current || signal?.aborted) return;
 
       const [summaryResult, policiesResult, activityResult] = results;
 
@@ -70,22 +76,29 @@ export function useDashboardData() {
         setError(errMsg);
       }
     } catch (err: unknown) {
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current || signal?.aborted) return;
       const message = err instanceof Error ? err.message : 'Error al conectar con los servicios de SecureLife';
       setError(message);
     } finally {
-      if (isMountedRef.current) {
+      if (isMountedRef.current && !signal?.aborted) {
         setIsLoading(false);
       }
     }
   }, []);
 
+  const refresh = useCallback(async () => {
+    await loadData();
+  }, [loadData]);
+
   useEffect(() => {
     isMountedRef.current = true;
-    void loadData();
+    const controller = new AbortController();
+
+    void loadData(controller.signal);
 
     return () => {
       isMountedRef.current = false;
+      controller.abort();
     };
   }, [loadData]);
 
@@ -95,7 +108,7 @@ export function useDashboardData() {
     activity,
     isLoading,
     error,
-    refresh: () => loadData(true),
+    refresh,
   };
 }
 

@@ -53,9 +53,9 @@ Definidos en `src/index.css` mediante la directiva moderna `@theme`:
 El sistema tipográfico combina 3 familias complementarias cargadas desde Google Fonts en `index.html`:
 
 ```text
-Google Sans Flex ➔ Títulos, números grandes y llamados de alto impacto
-Outfit           ➔ Subtítulos, métricas, badges y labels de formularios
-Lexend           ➔ Cuerpo de texto general, inputs, tablas y botones
+Google Sans Flex -> Títulos, números grandes y llamados de alto impacto
+Outfit           -> Subtítulos, métricas, badges y labels de formularios
+Lexend           -> Cuerpo de texto general, inputs, tablas y botones
 ```
 
 ### Clases de Utilidad

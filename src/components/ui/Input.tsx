@@ -7,6 +7,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   width?: string | number;
+  height?: string | number;
   containerClassName?: string;
   variant?: 'glass' | 'outline';
   inputSize?: 'sm' | 'md';
@@ -32,6 +33,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   leftIcon,
   rightIcon,
   width,
+  height,
   className = '',
   containerClassName = '',
   disabled,
@@ -55,7 +57,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     : 'px-4 py-2.5 text-sm rounded-xl';
 
   return (
-    <div style={{ width }} className={`flex flex-col ${inputSize === 'sm' ? 'gap-1' : 'gap-1.5'} text-left ${containerClassName}`}>
+    <div style={{ width, height }} className={`flex flex-col ${inputSize === 'sm' ? 'gap-1' : 'gap-1.5'} text-left ${containerClassName}`}>
       {label && (
         <label
           htmlFor={inputId}
