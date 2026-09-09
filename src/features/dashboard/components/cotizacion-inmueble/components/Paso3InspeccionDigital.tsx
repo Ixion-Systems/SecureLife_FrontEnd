@@ -138,7 +138,14 @@ export const Paso3InspeccionDigital: React.FC<Paso3InspeccionDigitalProps> = ({
         </div>
 
         <Badge variant={inspeccionCompleta ? 'primary' : 'secondary'} className="self-start sm:self-auto text-xs py-1">
-          {inspeccionCompleta ? '✓ 100% Documentación Completa' : `${completados} de ${totalRequeridos} Documentos Listos`}
+          {inspeccionCompleta ? (
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              100% Documentación Completa
+            </span>
+          ) : (
+            `${completados} de ${totalRequeridos} Documentos Listos`
+          )}
         </Badge>
       </div>
 

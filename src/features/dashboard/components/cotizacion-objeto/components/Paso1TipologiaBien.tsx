@@ -1,6 +1,6 @@
 import React from 'react';
 import type { UseFormWatch, UseFormSetValue } from 'react-hook-form';
-import { Smartphone, Laptop, Camera, Bike, ArrowRight, Sparkles } from 'lucide-react';
+import { Smartphone, Laptop, Camera, Bike, ArrowRight, Sparkles, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type { CotizacionObjetoFormData, TipoObjeto } from '../types/cotizacion-objeto.types';
 
@@ -156,10 +156,19 @@ export const Paso1TipologiaBien: React.FC<Paso1TipologiaBienProps> = ({ watch, s
               </div>
 
               <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold">
-                <span className={isSelected ? 'text-[#006e2f]' : 'text-gray-500'}>
-                  {isSelected ? '✓ Seleccionado para cotizar' : 'Click para elegir'}
+                <span className={isSelected ? 'text-[#006e2f] inline-flex items-center gap-1' : 'text-gray-500'}>
+                  {isSelected ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-[#006e2f]" />
+                      Seleccionado para cotizar
+                    </>
+                  ) : (
+                    'Click para elegir'
+                  )}
                 </span>
-                <span className="text-gray-400 text-xs">Paso 2 →</span>
+                <span className="text-gray-400 text-xs inline-flex items-center gap-1">
+                  Paso 2 <ArrowRight className="w-3 h-3" />
+                </span>
               </div>
             </div>
           );

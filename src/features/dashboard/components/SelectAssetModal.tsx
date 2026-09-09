@@ -205,7 +205,7 @@ export const SelectAssetModal: React.FC<SelectAssetModalProps> = ({
 
                   <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#006e2f] font-semibold">
                     <span>Configurar cotización</span>
-                    <span className="text-gray-400 group-hover:text-[#006e2f] text-xs">→</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#006e2f] transition-colors" />
                   </div>
                 </div>
               );

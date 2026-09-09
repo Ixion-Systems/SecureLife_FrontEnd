@@ -1,6 +1,6 @@
 import React from 'react';
 import type { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
-import { HeartPulse, Cigarette, Flame, Activity, Info } from 'lucide-react';
+import { HeartPulse, Cigarette, Flame, Activity, Info, Check } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import type { CotizacionVidaFormData } from '../types/cotizacion-vida.types';
 
@@ -177,7 +177,7 @@ export const Paso2SaludHabitos: React.FC<Paso2SaludHabitosProps> = ({
                         isChecked ? 'bg-blue-600 text-white' : 'border border-gray-300'
                       }`}
                     >
-                      {isChecked ? '✓' : ''}
+                      {isChecked && <Check className="w-3 h-3 text-white" />}
                     </span>
                   </button>
                 );
@@ -244,7 +244,7 @@ export const Paso2SaludHabitos: React.FC<Paso2SaludHabitosProps> = ({
                         isChecked ? 'bg-rose-600 text-white' : 'border border-gray-300'
                       }`}
                     >
-                      {isChecked ? '✓' : ''}
+                      {isChecked && <Check className="w-3 h-3 text-white" />}
                     </span>
                   </button>
                 );

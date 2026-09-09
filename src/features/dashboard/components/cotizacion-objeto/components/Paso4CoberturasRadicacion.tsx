@@ -11,6 +11,8 @@ import {
   Info,
   Droplets,
   Zap,
+  Check,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -179,8 +181,8 @@ export const Paso4CoberturasRadicacion: React.FC<Paso4CoberturasRadicacionProps>
                 Robo violento en la calle, transporte público o lugares cerrados en todo el mundo.
               </p>
             </div>
-            <span className="text-[10px] font-bold text-amber-800 mt-2 block">
-              {cubreRobo ? '✓ Incluido' : '+ Agregar'}
+            <span className="text-[10px] font-bold text-amber-800 mt-2 inline-flex items-center gap-1">
+              {cubreRobo ? <><Check className="w-3 h-3" /> Incluido</> : <><Plus className="w-3 h-3" /> Agregar</>}
             </span>
           </div>
 
@@ -212,8 +214,8 @@ export const Paso4CoberturasRadicacion: React.FC<Paso4CoberturasRadicacionProps>
                 Rotura de display, pantalla o estructura por caída involuntaria o impacto severo.
               </p>
             </div>
-            <span className="text-[10px] font-bold text-blue-800 mt-2 block">
-              {cubreAccidente ? '✓ Incluido' : '+ Agregar'}
+            <span className="text-[10px] font-bold text-blue-800 mt-2 inline-flex items-center gap-1">
+              {cubreAccidente ? <><Check className="w-3 h-3" /> Incluido</> : <><Plus className="w-3 h-3" /> Agregar</>}
             </span>
           </div>
 
@@ -245,8 +247,8 @@ export const Paso4CoberturasRadicacion: React.FC<Paso4CoberturasRadicacionProps>
                 Sulfatación o cortocircuito accidental por contacto o inmersión con agua/café.
               </p>
             </div>
-            <span className="text-[10px] font-bold text-purple-800 mt-2 block">
-              {cubreLiquidos ? '✓ Incluido' : '+ Agregar'}
+            <span className="text-[10px] font-bold text-purple-800 mt-2 inline-flex items-center gap-1">
+              {cubreLiquidos ? <><Check className="w-3 h-3" /> Incluido</> : <><Plus className="w-3 h-3" /> Agregar</>}
             </span>
           </div>
         </div>

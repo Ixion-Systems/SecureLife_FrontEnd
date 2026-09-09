@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Check, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type { CoberturaTipo } from '../types/cotizacion-auto.types';
 import { COVERAGE_OPTIONS } from '../data/coberturaData';
@@ -46,9 +46,10 @@ export const CoberturaCardList: React.FC<CoberturaCardListProps> = ({
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge
                   variant="primary"
-                  className="shadow-sm font-subtitle text-[11px] uppercase tracking-wider font-bold bg-[#22c55e] text-[#004b1e] border-0"
+                  className="shadow-sm font-subtitle text-[11px] uppercase tracking-wider font-bold bg-[#22c55e] text-[#004b1e] border-0 inline-flex items-center gap-1"
                 >
-                  ⭐ {opt.badge}
+                  <Star className="w-3 h-3 fill-current" />
+                  {opt.badge}
                 </Badge>
               </div>
             )}
@@ -93,7 +94,7 @@ export const CoberturaCardList: React.FC<CoberturaCardListProps> = ({
               <ul className="mt-4 space-y-2">
                 {opt.features.map((feat, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-xs font-body text-gray-700">
-                    <span className="text-[#22c55e] font-bold text-sm leading-none shrink-0 mt-0.5">✓</span>
+                    <Check className="w-3.5 h-3.5 text-[#22c55e] shrink-0 mt-0.5" />
                     <span>{feat}</span>
                   </li>
                 ))}

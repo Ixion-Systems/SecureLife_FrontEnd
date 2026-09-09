@@ -53,9 +53,10 @@ function getAuthHeaders(): HeadersInit {
   };
 }
 
-export async function fetchDashboardSummary(): Promise<DashboardSummaryResponse> {
+export async function fetchDashboardSummary(signal?: AbortSignal): Promise<DashboardSummaryResponse> {
   const res = await fetch(`${API_BASE_URL}/summary`, {
     headers: getAuthHeaders(),
+    signal,
   });
 
   if (res.status === 401) {
@@ -71,9 +72,10 @@ export async function fetchDashboardSummary(): Promise<DashboardSummaryResponse>
   return json.data;
 }
 
-export async function fetchClientPolicies(): Promise<ApiPolicy[]> {
+export async function fetchClientPolicies(signal?: AbortSignal): Promise<ApiPolicy[]> {
   const res = await fetch(`${API_BASE_URL}/policies`, {
     headers: getAuthHeaders(),
+    signal,
   });
 
   if (res.status === 401) {
@@ -89,9 +91,10 @@ export async function fetchClientPolicies(): Promise<ApiPolicy[]> {
   return json.data || [];
 }
 
-export async function fetchClientActivity(limit: number = 10): Promise<ApiActivity[]> {
+export async function fetchClientActivity(limit: number = 10, signal?: AbortSignal): Promise<ApiActivity[]> {
   const res = await fetch(`${API_BASE_URL}/activity?limit=${limit}`, {
     headers: getAuthHeaders(),
+    signal,
   });
 
   if (res.status === 401) {
